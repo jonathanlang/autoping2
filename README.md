@@ -31,6 +31,26 @@ macOS drops Rosetta 2. This version keeps its behavior and adds what it was miss
 
 macOS 14 Sonoma or later on Apple Silicon.
 
+## Installation
+
+Download `Autoping.zip` from the [latest release](https://github.com/jonathanlang/autoping2/releases/latest),
+unzip it and move `Autoping.app` to your Applications folder.
+
+The app is not notarized by Apple, so macOS blocks it the first time you open it.
+To allow it once:
+
+1. Open Autoping and dismiss the warning.
+2. Go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway**
+   next to the message about Autoping, then confirm.
+
+Alternatively, run this in Terminal and open the app normally:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Autoping.app
+```
+
+Or build it yourself, see below.
+
 ## Building
 
 Autoping is a Swift package. The Xcode Command Line Tools are enough:
@@ -42,9 +62,6 @@ Scripts/build.sh --install
 
 This builds `dist/Autoping.app`, installs it to `/Applications` and launches it.
 `Scripts/build.sh` only builds, `Scripts/test.sh` runs the unit tests.
-
-The app is signed ad hoc, so build it on the Mac you want to run it on – a copied
-build is blocked by Gatekeeper.
 
 You can also open `Package.swift` in Xcode for development. Xcode runs the app outside
 an app bundle, so notifications and launch at login are not available there.
