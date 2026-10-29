@@ -35,19 +35,24 @@ enum LoginItem {
 /// "Connection down / restored" alerts through the User Notifications framework.
 @MainActor
 final class Notifier: NSObject, UNUserNotificationCenterDelegate {
-    private var center: UNUserNotificationCenter { .current() }
+    /// Nil when not running from an app bundle (e.g. the bare binary Xcode builds from
+    /// Package.swift): `UNUserNotificationCenter.current()` raises an exception there.
+    private let center: UNUserNotificationCenter? =
+        Bundle.main.bundleURL.pathExtension == "app" ? .current() : nil
 
     override init() {
         super.init()
-        center.delegate = self
+        center?.delegate = self
     }
 
     /// Asks for permission if needed; false if the user denied it.
     func requestAuthorization() async -> Bool {
-        (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
+        guard let center else { return false }
+        return (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
     }
 
     func connectionChanged(up: Bool, host: String) {
+        guard let center else { return }
         let content = UNMutableNotificationContent()
         if up {
             content.title = String(localized: "Connection Restored")

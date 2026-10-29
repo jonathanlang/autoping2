@@ -31,6 +31,30 @@ enum BarsIcon {
         return image
     }
 
+    /// Icon and text in one template image, the text's baseline on the bars' bottom edge.
+    /// (Image and title of a status bar button are each centered on their own, which puts
+    /// the text a bit higher.)
+    static func image(_ icon: NSImage, text: String, font: NSFont) -> NSImage {
+        let spacing: CGFloat = 4
+        // Room below the baseline for descenders like the parentheses around the packet loss.
+        let padding: CGFloat = 2
+        let title = NSAttributedString(string: text, attributes: [.font: font, .foregroundColor: NSColor.black])
+        let textSize = title.size()
+        let size = NSSize(
+            width: (icon.size.width + spacing + textSize.width).rounded(.up),
+            height: icon.size.height + 2 * padding
+        )
+        let image = NSImage(size: size, flipped: false) { _ in
+            icon.draw(in: NSRect(origin: NSPoint(x: 0, y: padding), size: icon.size))
+            // Bars stand 1 pt above the icon's bottom; draw(at:) takes the descender's bottom.
+            title.draw(at: NSPoint(x: icon.size.width + spacing, y: padding + 1 + font.descender))
+            return true
+        }
+        image.isTemplate = true
+        image.accessibilityDescription = [icon.accessibilityDescription, text].compactMap(\.self).joined(separator: ", ")
+        return image
+    }
+
     static let offline: NSImage = {
         let configuration = NSImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
         let image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: String(localized: "Offline"))!

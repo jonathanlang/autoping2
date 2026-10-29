@@ -82,17 +82,17 @@ final class StatusItemController: NSObject {
                 : latencyText
         }
 
-        button.image = mode.showsIcon ? image : nil
-        // A leading space keeps the text a few points away from the icon.
-        let title = switch mode {
-        case .iconAndText: " " + text
-        case .textOnly: text
-        case .iconOnly: ""
+        switch mode {
+        case .iconAndText:
+            button.image = BarsIcon.image(image, text: text, font: font)
+            button.title = ""
+        case .iconOnly:
+            button.image = image
+            button.title = ""
+        case .textOnly:
+            button.image = nil
+            button.attributedTitle = NSAttributedString(string: text, attributes: [.font: font])
         }
-        button.attributedTitle = NSAttributedString(
-            string: title,
-            attributes: [.font: font, .baselineOffset: 0.5]
-        )
         button.toolTip = tooltip
     }
 

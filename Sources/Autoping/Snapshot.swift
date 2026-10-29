@@ -27,7 +27,7 @@ extension AppDelegate {
                     bar.addSubview(copy)
                     Self.renderView(bar, appearance: appearance, to: folder.appendingPathComponent("menubar-\(name).png"))
                 }
-                Self.report("Menu bar: \(button.attributedTitle.string) | tooltip: \(button.toolTip ?? "")")
+                Self.report("Menu bar: \(button.attributedTitle.string) | image: \(button.image?.accessibilityDescription ?? "") | tooltip: \(button.toolTip ?? "")")
             }
             let settings = SettingsModel(preferences: preferences, monitor: monitor, notifier: notifier)
             for (name, appearance) in [("light", NSAppearance.Name.aqua), ("dark", .darkAqua)] {
