@@ -1,0 +1,84 @@
+/* Menu bar & status */
+"Offline" = "Offline";
+"Connection down" = "Verbindung unterbrochen";
+"Latest ping time: %@" = "Letzte Ping-Zeit: %@";
+"Recent packet loss: %@" = "Aktueller Paketverlust: %@";
+"%lld of 5 bars" = "%lld von 5 Balken";
+"Settings…" = "Einstellungen …";
+"About %@" = "Über %@";
+"Quit %@" = "%@ beenden";
+"Quit" = "Beenden";
+"No network connection" = "Keine Netzwerkverbindung";
+
+/* Popover */
+"Paused" = "Pausiert";
+"Connecting…" = "Verbinde …";
+"Excellent connection" = "Ausgezeichnete Verbindung";
+"Good connection" = "Gute Verbindung";
+"Fair connection" = "Mittelmäßige Verbindung";
+"Poor connection" = "Schwache Verbindung";
+"Bad connection" = "Schlechte Verbindung";
+"Latency" = "Latenz";
+"Packet loss" = "Paketverlust";
+"Quality" = "Qualität";
+"Time" = "Zeit";
+"Segment" = "Abschnitt";
+"Slow ping threshold" = "Schwelle für langsame Pings";
+"Waiting for replies…" = "Warte auf Antworten …";
+"Latency over the last five minutes" = "Latenz der letzten fünf Minuten";
+"Statistics" = "Statistik";
+"Current Session" = "Aktuelle Sitzung";
+"All Time" = "Gesamt";
+"Pings sent" = "Gesendete Pings";
+"Replies lost" = "Verlorene Antworten";
+"Average response" = "Durchschnittliche Antwort";
+"Fastest response" = "Schnellste Antwort";
+"Slowest response" = "Langsamste Antwort";
+"Reset Session Stats" = "Sitzung zurücksetzen";
+"Reset All Time Stats" = "Gesamtstatistik zurücksetzen";
+"Reset all time statistics for %@?" = "Gesamtstatistik für %@ zurücksetzen?";
+"Reset" = "Zurücksetzen";
+"Cancel" = "Abbrechen";
+
+/* Settings */
+"%@ Settings" = "%@-Einstellungen";
+"Connection" = "Verbindung";
+"Host to ping" = "Ziel-Host";
+"Address" = "Adresse";
+"Resolving…" = "Wird aufgelöst …";
+"IP version" = "IP-Version";
+"Automatic" = "Automatisch";
+"The default settings work well with most connections. Increase the slow ping threshold if you're on a connection that always has high latency (e.g. via satellite) and the indicator never reaches 5 bars." = "Die Standardwerte passen für die meisten Verbindungen. Erhöhe die Schwelle, wenn deine Verbindung immer eine hohe Latenz hat (z. B. per Satellit) und die Anzeige nie 5 Balken erreicht.";
+"Ping timeout" = "Ping-Timeout";
+"Menu Bar" = "Menüleiste";
+"Display" = "Anzeige";
+"Icon and Text" = "Symbol und Text";
+"Icon Only" = "Nur Symbol";
+"Text Only" = "Nur Text";
+"Show packet loss in menu bar" = "Paketverlust in der Menüleiste anzeigen";
+"General" = "Allgemein";
+"Connection up/down alerts" = "Bei Verbindungsabbruch benachrichtigen";
+"Notifications are turned off for %@ in System Settings › Notifications." = "Mitteilungen für %@ sind in den Systemeinstellungen › Mitteilungen ausgeschaltet.";
+"Launch at login" = "Bei der Anmeldung starten";
+"Allow %@ in System Settings to start it at login." = "Erlaube %@ in den Systemeinstellungen, bei der Anmeldung zu starten.";
+"Open Login Items…" = "Anmeldeobjekte öffnen …";
+"Restore Default Settings" = "Standardeinstellungen wiederherstellen";
+
+/* Notifications */
+"Connection Down" = "Verbindung unterbrochen";
+"Your internet connection seems to be down." = "Deine Internetverbindung scheint unterbrochen zu sein.";
+"Connection Restored" = "Verbindung wiederhergestellt";
+"Your internet connection has been restored." = "Deine Internetverbindung ist wieder da.";
+
+/* Errors */
+"Could not resolve %@: %@" = "%1$@ konnte nicht aufgelöst werden: %2$@";
+"%@ has no %@ address" = "%1$@ hat keine %2$@-Adresse";
+"Cannot reach %@: %@" = "%1$@ ist nicht erreichbar: %2$@";
+"Could not open ICMP socket: %@" = "ICMP-Socket konnte nicht geöffnet werden: %@";
+
+/* Launch & about */
+"Start %@ automatically at login?" = "%@ automatisch bei der Anmeldung starten?";
+"You can change this at any time in the settings." = "Das kannst du jederzeit in den Einstellungen ändern.";
+"Start at Login" = "Bei Anmeldung starten";
+"Not Now" = "Jetzt nicht";
+"A modern rebuild of autoping 1.02 by Memset Ltd. (Richard West, original concept by Kate Craig-Wood)." = "Ein moderner Nachbau von autoping 1.02 von Memset Ltd. (Richard West, ursprüngliche Idee von Kate Craig-Wood).";
