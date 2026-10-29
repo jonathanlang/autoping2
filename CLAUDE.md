@@ -2,7 +2,8 @@
 
 Menu bar app (Swift 6, SwiftPM, macOS 14+, Apple Silicon) that rebuilds the Intel-only
 autoping 1.02 by Memset Ltd. (2013), which dies with Rosetta 2 in macOS 28.
-README.md (German) has the user-facing overview and the reconstructed algorithm.
+README.md (English, public facing) has the overview and the reconstructed algorithm;
+build quirks and diagnostics live only here.
 
 Jon writes in German: answer in German. Code, comments and commit messages are English.
 

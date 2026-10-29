@@ -1,75 +1,90 @@
-# Autoping 2
+# Autoping
 
-Ein moderner Nachbau von **autoping 1.02** (Memset Ltd., 2013): eine Menüleisten-App,
-die jede Sekunde einen Host anpingt und die Verbindungsqualität als Signalbalken anzeigt.
+A tiny menu bar app for macOS that pings a host every second and shows the quality of
+your internet connection as signal bars, with the latest ping time next to it.
 
-## Warum
+Autoping is a modern rebuild of [autoping](https://www.memset.com) 1.02 by Memset Ltd.
+(2013). The original is Intel-only, is no longer maintained and stops working once
+macOS drops Rosetta 2. This version keeps its behavior and adds what it was missing.
 
-Das Original ist ein reines Intel-Binary (x86_64, gebaut mit Xcode 6.1 für OS X 10.10)
-und läuft auf Apple-Silicon-Macs nur über Rosetta 2, das mit macOS 28 wegfällt.
-Weiterentwickelt wird es nicht mehr.
+<p align="center">
+  <img src="docs/popover.png" width="350" alt="Menu bar item and the details popover with latency, packet loss, a latency chart and statistics">
+  &nbsp;&nbsp;
+  <img src="docs/settings.png" width="430" alt="Settings window with host, IP version, slow ping threshold, timeout, menu bar and general options">
+</p>
 
-## Was das Original macht (aus dem Binary rekonstruiert)
+## Features
 
-- Pingt einen Host (Standard `memset.com`) jede Sekunde per ICMP an (Apples SimplePing, nur IPv4).
-- **Bewertung** (`onHousekeepingTimer:`, jede Sekunde): Jeder Ping der letzten 30 s bekommt einen Score –
-  1 bis zur „Slow ping threshold“ (Standard 100 ms), danach linear fallend auf 0 über weitere 900 ms
-  und weiter bis −2,5; keine Antwort nach dem Timeout (4 s) = −2,5. Die Scores werden mit Gewicht
-  ×1,2 pro neuerem Ping gemittelt; `floor(clamp(score, 0, 1) × 5)` wählt 1–5 Balken.
-- **Watchdog:** keine Antwort seit Timeout + 4 Sekunden → „Failed“, Pinger wird neu gestartet (inkl. DNS).
-- Menüleiste: Symbol und/oder Text („23ms“, optional mit Paketverlust), Tooltip mit Ping-Zeit und Verlust.
-- Statistikfenster pro Host (Sitzung und gesamt: gesendet, verloren, Verlust %, Ø/min/max), in SQLite gespeichert.
-- Einstellungen: Host, Schwelle (50–2000 ms), Anzeige, Paketverlust-Text, Up/Down-Mitteilungen, Start bei Anmeldung (über eine Helper-App).
+- **Signal bars at a glance** – one to five bars, computed exactly like the original
+  (see [How the bars are calculated](#how-the-bars-are-calculated)).
+- **Details on click** – status, latency, packet loss, a live chart of the last five
+  minutes with lost pings marked, and session and all-time statistics.
+- **IPv4 and IPv6** – chosen automatically, or forced to one of them.
+- **Alerts** when the connection goes down and when it comes back.
+- **No false alarms** – pauses while the Mac sleeps, and restarts with a fresh DNS
+  lookup when the network changes (Wi-Fi, Ethernet, VPN).
+- **Clear errors** – unknown host, no route, no network.
+- Icon, text or both in the menu bar; optional packet loss text; launch at login;
+  light and dark mode; English and German.
 
-`ConnectionScorer` in `Sources/AutopingCore` ist eine 1:1-Umsetzung dieses Algorithmus, abgesichert durch Unit-Tests.
+## Requirements
 
-## Was neu ist
+macOS 14 Sonoma or later on Apple Silicon.
 
-- Nativ für Apple Silicon, Swift 6 mit strikter Nebenläufigkeitsprüfung, macOS 14+.
-- **IPv4 und IPv6** (unprivilegierte ICMP-Sockets), wählbar oder automatisch mit Fallback.
-- **Popover** statt Statistikfenster: Status, Latenz, Paketverlust, Live-Diagramm der letzten 5 Minuten
-  (verlorene Pings rot markiert), Sitzungs- und Gesamtstatistik.
-- **Schlaf/Aufwachen:** keine Pings im Ruhezustand, Schonfrist nach dem Aufwachen – keine falschen Ausfallmeldungen.
-- **Netzwerkwechsel** (WLAN ↔ Ethernet, VPN) startet sofort neu mit frischer DNS-Auflösung; kein Netz → sofort „Offline“.
-- Klare Fehlermeldungen (DNS-Fehler, „No route to host“).
-- Start bei Anmeldung über `SMAppService` (keine Helper-App), Mitteilungen über das User-Notifications-Framework.
-- Ping-Timeout einstellbar, Deutsch und Englisch, Hell-/Dunkelmodus, Rechtsklick-Menü.
-- Standard-Host ist `1.1.1.1` (Cloudflare, sehr nah, beantwortet ICMP).
+## Building
 
-## Bauen
-
-Es reichen die Command Line Tools (kein Xcode):
+Autoping is a Swift package. The Xcode Command Line Tools are enough:
 
 ```bash
-Scripts/test.sh               # Unit-Tests
-Scripts/build.sh              # baut dist/Autoping.app
-Scripts/build.sh --install    # baut, installiert und startet
+xcode-select --install
+Scripts/build.sh --install
 ```
 
-`--install` legt die App nach `/Applications` – solange dort noch das alte `autoping.app` liegt,
-nach `~/Applications` (die Namen würden auf dem Dateisystem kollidieren, Groß-/Kleinschreibung zählt nicht).
+This builds `dist/Autoping.app`, installs it to `/Applications` and launches it.
+`Scripts/build.sh` only builds, `Scripts/test.sh` runs the unit tests.
 
-Zwei Eigenheiten der Toolchain, um die die Skripte herumarbeiten:
+The app is signed ad hoc, so build it on the Mac you want to run it on – a copied
+build is blocked by Gatekeeper.
 
-- SwiftPMs neues Standard-Buildsystem startet nicht, weil die Command Line Tools einen leeren Ordner
-  `SDKs/MacOSX12.3.sdk` (ohne `SDKSettings.plist`) enthalten → `--build-system native`.
-- Im macOS-27-SDK ist SwiftUIs `@State` ein Macro, dessen Plugin nur mit Xcode kommt → View-Zustand
-  liegt in kleinen `@Observable`-Modellen (`PopoverState`, `SettingsModel`).
+You can also open `Package.swift` in Xcode for development. Xcode runs the app outside
+an app bundle, so notifications and launch at login are not available there.
 
-## Diagnose
+## Usage
+
+Click the menu bar item for details, right-click it for Settings, About and Quit.
+In Settings you choose the host (default `1.1.1.1`), the IP version, the latency at
+which a ping counts as slow (default 100 ms) and the timeout after which it counts as
+lost (default 4 s).
+
+## How the bars are calculated
+
+The algorithm was recovered from the original binary and is implemented in
+`Sources/AutopingCore/ConnectionScorer.swift`, covered by unit tests:
+
+1. Every ping of the last 30 seconds gets a score: 1 up to the slow threshold, then
+   falling linearly to 0 over the next 900 ms (and further, down to −2.5). A ping
+   without a reply within the timeout scores −2.5.
+2. The scores are averaged, each ping weighted 1.2 times as much as the one before it,
+   so recent pings count most.
+3. The average, clamped to 0…1, maps to one to five bars.
+
+If no reply arrives for the timeout plus four seconds, the connection is reported as
+down and the pinger restarts.
+
+## Troubleshooting
 
 ```bash
-dist/Autoping.app/Contents/MacOS/Autoping -SnapshotDirectory /tmp/autoping-snap -SnapshotDelay 10
 log stream --predicate 'subsystem == "de.jonathanlang.Autoping"'
 ```
 
-Der Snapshot-Modus rendert Menüleisten-Eintrag, Popover und Einstellungen (hell/dunkel) als PNG.
-Alle Einstellungen lassen sich so auch testweise per Argument überschreiben, z. B. `-Hostname 192.0.2.1`.
+Settings are stored under `de.jonathanlang.Autoping` in the user defaults, statistics in
+`~/Library/Application Support/de.jonathanlang.Autoping/stats.json`.
 
-## Daten
+## Credits
 
-- Einstellungen: `defaults read de.jonathanlang.Autoping`
-- Gesamtstatistik: `~/Library/Application Support/de.jonathanlang.Autoping/stats.json`
+Original autoping by Memset Ltd. (Richard West, original concept by Kate Craig-Wood).
+This rebuild is an independent project and not affiliated with Memset.
 
-Die Einstellungen und Statistiken des Originals liegen in dessen Sandbox-Container und sind von außen
-nicht lesbar; Host und Schwelle bitte einmal neu eintragen.
+## License
+
+MIT – see [LICENSE](LICENSE).
