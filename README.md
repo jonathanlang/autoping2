@@ -8,7 +8,7 @@ Autoping is a modern rebuild of [autoping](https://www.memset.com) 1.02 by Memse
 macOS drops Rosetta 2. This version keeps its behavior and adds what it was missing.
 
 <p align="center">
-  <img src="docs/popover.png" width="350" alt="Menu bar item and the details popover with latency, packet loss, a latency chart and statistics">
+  <img src="docs/popover.png" width="357" alt="Menu bar item and the details popover with latency, packet loss, a latency chart and statistics">
   &nbsp;&nbsp;
   <img src="docs/settings.png" width="430" alt="Settings window with host, IP version, slow ping threshold, timeout, menu bar and general options">
 </p>
